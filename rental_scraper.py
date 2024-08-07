@@ -21,7 +21,7 @@ while True:
     rentalCity = input("What city are you interested in renting?: ")
     if rentalCity.lower() in final_towns_cities_list:
         print("Found city/town")  # For test purposes
-        break;
+        break
 
     else:
         print("Sorry it seems that this city/town is not in the list of Ontario cities. Please double check if it is a valid city, and if is then feel free to add to the txt file! If not, feel free to try again ")
@@ -31,4 +31,11 @@ rental_url = f"https://www.realtor.ca/on/%s/rentals?gad_source=1&gclid=CjwKCAjwk
 
 driver.get(rental_url)
 
+sleep(5)  # 5 seconds for it to load
+
+# initializing list for the properties
+properties_list = []
+
+# <div class="listingCard card">
+property = driver.find_elements(By.CLASS_NAME, 'listingCard')
 
