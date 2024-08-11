@@ -1,4 +1,5 @@
 from selenium import webdriver;
+from selenium.webdriver.chrome.service import Service
 from time import sleep;
 from selenium.webdriver.common.by import By
 
@@ -13,10 +14,11 @@ def construct_towns_and_cities_list(file_name):
 
 # Make sure to change path to where the chromedriver is located
 PATH = "/Users/atmiyapatel/Downloads/chromedriver"
-driver = webdriver.Chrome(PATH)
+service = Service(PATH)
+driver = webdriver.Chrome(service= service)
 
 # We will use realtor.ca as it is Canada's largest real estate website
-final_towns_cities_list = construct_towns_and_cities_list('ontario_towns_cities.txt')
+final_towns_cities_list = construct_towns_and_cities_list('ontario_towns_cities')
 while True:
     rentalCity = input("What city are you interested in renting?: ")
     if rentalCity.lower() in final_towns_cities_list:
