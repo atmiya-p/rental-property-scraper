@@ -41,5 +41,32 @@ sleep(5)  # 5 seconds for it to load
 properties_list = []
 
 # <div class="listingCard card">
-property = driver.find_elements(By.CLASS_NAME, 'listingCard')
+propertyCards = driver.find_elements(By.CLASS_NAME, 'listingCard')
+
+for rentalProperty in properties_list:
+    property_info = {}
+
+    # <div class="listingCardAddress" data-binding="innertext=Address"> ADDRESS WOULD BE HERE </div>
+    try:
+        address_element = property.find_element(By.CLASS_NAME, 'listingCardAddress')
+        if address_element:
+            property_info['address'] = address_element.text
+        else:
+            property_info['address'] = "N/A"
+    except Exception as exception:
+        property_info['address'] = "Could not locate"
+        print(exception)
+
+    # <div class="listingCardPrice" title="$0,000/Monthly" data-value-cad="$0,000/Monthly" data-binding="hidden=ListingIsSold,data-value-cad={Price},innertext=DisplayPrice,title=ConvertedPrice">$0,000/Monthly</div>
+    try:
+        price_element = property.find_element(By.CLASS_NAME, 'listingCardPrice')
+        if price_element:
+            property_info['price'] = price_element.text
+        else:
+            property_info['price'] = "N/A"
+    except Exception as exception:
+        property_info['price'] = "Could not locate"
+        print(exception)
+
+
 
