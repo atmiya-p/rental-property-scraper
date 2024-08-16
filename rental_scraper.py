@@ -3,6 +3,7 @@ from selenium.webdriver.chrome.service import Service
 from time import sleep;
 from selenium.webdriver.common.by import By
 
+
 def construct_towns_and_cities_list(file_name):
     towns_cities_list = []
     with open(file_name) as file:
@@ -43,7 +44,7 @@ properties_list = []
 # <div class="listingCard card">
 propertyCards = driver.find_elements(By.CLASS_NAME, 'listingCard')
 
-for rentalProperty in properties_list:
+for rentalProperty in propertyCards:
     property_info = {}
 
     # <div class="listingCardAddress" data-binding="innertext=Address"> ADDRESS WOULD BE HERE </div>
@@ -66,6 +67,31 @@ for rentalProperty in properties_list:
             property_info['price'] = "N/A"
     except Exception as exception:
         property_info['price'] = "Could not locate"
+        print(exception)
+
+    try:
+        bedrooms = property.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[1]/div[1]/div[2]')
+        if bedrooms:
+            property_info['bedrooms'] = bedrooms.text
+        else:
+            property_info['bedrooms'] = "N/A"
+
+    except Exception as exception:
+        property_info['bedrooms'] = "Could not locate"
+        print(exception)
+
+    # <div class="listingCardIconNum" data-binding="innertext=NumberVal">2</div>
+    # Use XPATH as nothing unique for bathrooms and bedrooms
+
+    try:
+        bathrooms = property.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[2]/div[1]/div[2]')
+        if bathrooms:
+            property_info['bathrooms'] = bathrooms.text
+        else:
+            property_info['bathrooms'] = "N/A"
+
+    except Exception as exception:
+        property_info['bathrooms'] = "Could not locate"
         print(exception)
 
 
