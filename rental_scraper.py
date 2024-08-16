@@ -49,7 +49,7 @@ for rentalProperty in propertyCards:
 
     # <div class="listingCardAddress" data-binding="innertext=Address"> ADDRESS WOULD BE HERE </div>
     try:
-        address_element = property.find_element(By.CLASS_NAME, 'listingCardAddress')
+        address_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardAddress')
         if address_element:
             property_info['address'] = address_element.text
         else:
@@ -60,7 +60,7 @@ for rentalProperty in propertyCards:
 
     # <div class="listingCardPrice" title="$0,000/Monthly" data-value-cad="$0,000/Monthly" data-binding="hidden=ListingIsSold,data-value-cad={Price},innertext=DisplayPrice,title=ConvertedPrice">$0,000/Monthly</div>
     try:
-        price_element = property.find_element(By.CLASS_NAME, 'listingCardPrice')
+        price_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardPrice')
         if price_element:
             property_info['price'] = price_element.text
         else:
@@ -70,7 +70,7 @@ for rentalProperty in propertyCards:
         print(exception)
 
     try:
-        bedrooms = property.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[1]/div[1]/div[2]')
+        bedrooms = rentalProperty.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[1]/div[1]/div[2]')
         if bedrooms:
             property_info['bedrooms'] = bedrooms.text
         else:
@@ -82,9 +82,8 @@ for rentalProperty in propertyCards:
 
     # <div class="listingCardIconNum" data-binding="innertext=NumberVal">2</div>
     # Use XPATH as nothing unique for bathrooms and bedrooms
-
     try:
-        bathrooms = property.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[2]/div[1]/div[2]')
+        bathrooms = rentalProperty.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[2]/div[1]/div[2]')
         if bathrooms:
             property_info['bathrooms'] = bathrooms.text
         else:
@@ -93,6 +92,3 @@ for rentalProperty in propertyCards:
     except Exception as exception:
         property_info['bathrooms'] = "Could not locate"
         print(exception)
-
-
-
