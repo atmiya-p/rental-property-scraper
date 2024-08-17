@@ -58,6 +58,8 @@ for rentalProperty in propertyCards:
         property_info['address'] = "Could not locate"
         print(exception)
 
+    print(address_element.text)
+
     # <div class="listingCardPrice" title="$0,000/Monthly" data-value-cad="$0,000/Monthly" data-binding="hidden=ListingIsSold,data-value-cad={Price},innertext=DisplayPrice,title=ConvertedPrice">$0,000/Monthly</div>
     try:
         price_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardPrice')
@@ -69,6 +71,8 @@ for rentalProperty in propertyCards:
         property_info['price'] = "Could not locate"
         print(exception)
 
+    print(price_element.text)
+
     try:
         bedrooms = rentalProperty.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[1]/div[1]/div[2]')
         if bedrooms:
@@ -79,6 +83,8 @@ for rentalProperty in propertyCards:
     except Exception as exception:
         property_info['bedrooms'] = "Could not locate"
         print(exception)
+
+    print(bedrooms.text)
 
     # <div class="listingCardIconNum" data-binding="innertext=NumberVal">2</div>
     # Use XPATH as nothing unique for bathrooms and bedrooms
@@ -92,3 +98,5 @@ for rentalProperty in propertyCards:
     except Exception as exception:
         property_info['bathrooms'] = "Could not locate"
         print(exception)
+
+    print(bathrooms.text)
