@@ -36,7 +36,7 @@ print(rental_url)  # test to see link
 
 driver.get(rental_url)
 
-sleep(5)  # 5 seconds for it to load
+sleep(15)  # 5 seconds for it to load
 
 # initializing list for the properties
 properties_list = []
@@ -74,29 +74,18 @@ for rentalProperty in propertyCards:
     print(price_element.text)
 
     try:
-        bedrooms = rentalProperty.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[1]/div[1]/div[2]')
-        if bedrooms:
-            property_info['bedrooms'] = bedrooms.text
-        else:
-            property_info['bedrooms'] = "N/A"
+        listingCardIconTopCons = rentalProperty.find_elements(By.CLASS_NAME, 'listingCardIconCon')
+        for listingCardIconTopCon in listingCardIconTopCons:
+            if listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconText').text.strip() == 'Bedrooms':
+                property_info['bedrooms'] = listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconNum').text.strip()
 
+            elif listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconText').text.strip() == 'Bathrooms':
+                property_info['bathrooms'] = listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconNum').text.strip()
     except Exception as exception:
-        property_info['bedrooms'] = "Could not locate"
         print(exception)
+        property_info['bedrooms'] = 'N/A'
+        property_info['bathrooms'] = 'N/A'
 
-    print(bedrooms.text)
 
-    # <div class="listingCardIconNum" data-binding="innertext=NumberVal">2</div>
-    # Use XPATH as nothing unique for bathrooms and bedrooms
-    try:
-        bathrooms = rentalProperty.find_element(By.XPATH, '//*[@id="SEOCardList"]/ul/li[2]/div/a/div/div[2]/div[2]/div[2]/div[1]/div[2]')
-        if bathrooms:
-            property_info['bathrooms'] = bathrooms.text
-        else:
-            property_info['bathrooms'] = "N/A"
-
-    except Exception as exception:
-        property_info['bathrooms'] = "Could not locate"
-        print(exception)
-
-    print(bathrooms.text)
+    print(property_info['bedrooms'])
+    print(property_info['bathrooms'])
