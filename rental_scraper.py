@@ -2,6 +2,8 @@ from selenium import webdriver;
 from selenium.webdriver.chrome.service import Service
 from time import sleep;
 from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 
 
 def construct_towns_and_cities_list(file_name):
@@ -36,56 +38,86 @@ print(rental_url)  # test to see link
 
 driver.get(rental_url)
 
-sleep(15)  # 5 seconds for it to load
-
 # initializing list for the properties
 properties_list = []
 
-# <div class="listingCard card">
-propertyCards = driver.find_elements(By.CLASS_NAME, 'listingCard')
 
-for rentalProperty in propertyCards:
-    property_info = {}
+def get_scraped_properties():
+    sleep(5)  # 5 seconds for it to load
 
-    # <div class="listingCardAddress" data-binding="innertext=Address"> ADDRESS WOULD BE HERE </div>
+    # <div class="listingCard card">
+    propertyCards = driver.find_elements(By.CLASS_NAME, 'listingCard')
+
+    for rentalProperty in propertyCards:
+        property_info = {}
+
+        # <div class="listingCardAddress" data-binding="innertext=Address"> ADDRESS WOULD BE HERE </div>
+        try:
+            address_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardAddress')
+            if address_element:
+                property_info['address'] = address_element.text
+            else:
+                property_info['address'] = "N/A"
+        except Exception as exception:
+            property_info['address'] = "Could not locate"
+            print(exception)
+
+        print(address_element.text)
+
+        # <div class="listingCardPrice" title="$0,000/Monthly" data-value-cad="$0,000/Monthly" data-binding="hidden=ListingIsSold,data-value-cad={Price},innertext=DisplayPrice,title=ConvertedPrice">$0,000/Monthly</div>
+        try:
+            price_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardPrice')
+            if price_element:
+                property_info['price'] = price_element.text
+            else:
+                property_info['price'] = "N/A"
+        except Exception as exception:
+            property_info['price'] = "Could not locate"
+            print(exception)
+
+        print(price_element.text)
+
+        try:
+            listingCardIconTopCons = rentalProperty.find_elements(By.CLASS_NAME, 'listingCardIconCon')
+            for listingCardIconTopCon in listingCardIconTopCons:
+                if listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconText').text.strip() == 'Bedrooms':
+                    property_info['bedrooms'] = listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconNum').text.strip()
+
+                elif listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconText').text.strip() == 'Bathrooms':
+                    property_info['bathrooms'] = listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconNum').text.strip()
+        except Exception as exception:
+            print(exception)
+            property_info['bedrooms'] = 'N/A'
+            property_info['bathrooms'] = 'N/A'
+
+        print(property_info['bedrooms'])
+        print(property_info['bathrooms'])
+
+        properties_list.append(property_info)
+
+def go_next():
+    # Next button
+    # <a aria-label="Go to the next page" href="#" class="lnkNextResultsPage paginationLink paginationLinkForward btn small">
+    #         <div class="paginationLinkText"><i class="fa fa-angle-right"></i></div>
+    #     </a>
+    wait = WebDriverWait(driver, 20)
+    next_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "lnkNextResultsPage")))
     try:
-        address_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardAddress')
-        if address_element:
-            property_info['address'] = address_element.text
+        if "disabled" in next_button.get_attribute("class"):
+            print("Next button is not clickable anymore")
+            return False
         else:
-            property_info['address'] = "N/A"
-    except Exception as exception:
-        property_info['address'] = "Could not locate"
-        print(exception)
-
-    print(address_element.text)
-
-    # <div class="listingCardPrice" title="$0,000/Monthly" data-value-cad="$0,000/Monthly" data-binding="hidden=ListingIsSold,data-value-cad={Price},innertext=DisplayPrice,title=ConvertedPrice">$0,000/Monthly</div>
-    try:
-        price_element = rentalProperty.find_element(By.CLASS_NAME, 'listingCardPrice')
-        if price_element:
-            property_info['price'] = price_element.text
-        else:
-            property_info['price'] = "N/A"
-    except Exception as exception:
-        property_info['price'] = "Could not locate"
-        print(exception)
-
-    print(price_element.text)
-
-    try:
-        listingCardIconTopCons = rentalProperty.find_elements(By.CLASS_NAME, 'listingCardIconCon')
-        for listingCardIconTopCon in listingCardIconTopCons:
-            if listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconText').text.strip() == 'Bedrooms':
-                property_info['bedrooms'] = listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconNum').text.strip()
-
-            elif listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconText').text.strip() == 'Bathrooms':
-                property_info['bathrooms'] = listingCardIconTopCon.find_element(By.CLASS_NAME, 'listingCardIconNum').text.strip()
+            print("Next button is available")
+            next_button.click()
+            sleep(5)
+            return True
     except Exception as exception:
         print(exception)
-        property_info['bedrooms'] = 'N/A'
-        property_info['bathrooms'] = 'N/A'
+        return False
 
 
-    print(property_info['bedrooms'])
-    print(property_info['bathrooms'])
+while True:
+    if go_next():
+        get_scraped_properties()
+    else:
+        break
