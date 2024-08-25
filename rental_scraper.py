@@ -43,7 +43,7 @@ properties_list = []
 
 
 def get_scraped_properties():
-    sleep(5)  # 5 seconds for it to load
+    sleep(15)  # 5 seconds for it to load
 
     # <div class="listingCard card">
     propertyCards = driver.find_elements(By.CLASS_NAME, 'listingCard')
@@ -95,24 +95,30 @@ def get_scraped_properties():
 
         properties_list.append(property_info)
 
+
+print(properties_list)
+
+
 def go_next():
-    # Next button
-    # <a aria-label="Go to the next page" href="#" class="lnkNextResultsPage paginationLink paginationLinkForward btn small">
-    #         <div class="paginationLinkText"><i class="fa fa-angle-right"></i></div>
-    #     </a>
-    wait = WebDriverWait(driver, 20)
-    next_button = wait.until(EC.element_to_be_clickable((By.CLASS_NAME, "lnkNextResultsPage")))
+    wait = WebDriverWait(driver, 30)
     try:
+        # Print current page source for debugging
+        print(driver.page_source)
+
+        # Locate the next button
+        next_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a.lnkNextResultsPage.paginationLink.paginationLinkForward.btn.small")))
+
+        # Check if the button is clickable
         if "disabled" in next_button.get_attribute("class"):
             print("Next button is not clickable anymore")
             return False
-        else:
-            print("Next button is available")
-            next_button.click()
-            sleep(5)
-            return True
-    except Exception as exception:
-        print(exception)
+
+        # Click the button
+        next_button.click()
+        sleep(5)  # Allow time for the next page to load
+        return True
+    except Exception as e:
+        print("Exception while locating the next button:", e)
         return False
 
 
