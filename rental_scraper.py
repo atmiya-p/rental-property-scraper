@@ -102,18 +102,10 @@ print(properties_list)
 def go_next():
     wait = WebDriverWait(driver, 30)
     try:
-        # Print current page source for debugging
-        print(driver.page_source)
-
-        # Locate the next button
-        next_button = wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, "a.lnkNextResultsPage.paginationLink.paginationLinkForward.btn.small")))
-
-        # Check if the button is clickable
+        next_button = wait.until(EC.element_to_be_clickable((By.CSS_SELECTOR, "a.lnkNextResultsPage.paginationLink.paginationLinkForward.btn.small")))
         if "disabled" in next_button.get_attribute("class"):
             print("Next button is not clickable anymore")
             return False
-
-        # Click the button
         next_button.click()
         sleep(5)  # Allow time for the next page to load
         return True
