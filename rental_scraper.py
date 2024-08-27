@@ -16,33 +16,6 @@ def construct_towns_and_cities_list(file_name):
     return towns_cities_list
 
 
-# Make sure to change path to where the chromedriver is located
-PATH = "/Users/atmiyapatel/Downloads/chromedriver"
-service = Service(PATH)
-driver = webdriver.Chrome(service= service)
-
-# We will use realtor.ca as it is Canada's largest real estate website
-final_towns_cities_list = construct_towns_and_cities_list('ontario_towns_cities')
-while True:
-    rentalCity = input("What city are you interested in renting?: ")
-    if rentalCity.lower() in final_towns_cities_list:
-        print("Found city/town")  # For test purposes
-        break
-
-    else:
-        print("Sorry it seems that this city/town is not in the list of Ontario cities. Please double check if it is a valid city, and if is then feel free to add to the txt file! If not, feel free to try again ")
-
-
-rental_url = f"https://www.realtor.ca/on/{rentalCity.replace(' ', '')}/rentals?gad_source=1&gclid=CjwKCAjwk8e1BhALEiwAc8MHiBzxtq0DWgB_kAFSDjUIoX2ahmeN9LhAnZ_9AW9nsadbTZzZk4QBrRoCAE0QAvD_BwE"
-
-print(rental_url)  # test to see link
-
-driver.get(rental_url)
-
-# initializing list for the properties
-properties_list = []
-
-
 def get_scraped_properties():
     sleep(15)  # 5 seconds for it to load
 
@@ -96,9 +69,40 @@ def get_scraped_properties():
 
         properties_list.append(property_info)
 
+
+def statistical_analysis(properties_dictionary):
+    for properties in properties_dictionary:
+        properties['price'] = int(properties['price'].replace('$', '').replace(',', '').split('/')[0])
+
+
+# Make sure to change path to where the chromedriver is located
+PATH = "/Users/atmiyapatel/Downloads/chromedriver"
+service = Service(PATH)
+driver = webdriver.Chrome(service= service)
+
+# We will use realtor.ca as it is Canada's largest real estate website
+final_towns_cities_list = construct_towns_and_cities_list('ontario_towns_cities')
+while True:
+    rentalCity = input("What city are you interested in renting?: ")
+    if rentalCity.lower() in final_towns_cities_list:
+        print("Found city/town")  # For test purposes
+        break
+
+    else:
+        print("Sorry it seems that this city/town is not in the list of Ontario cities. Please double check if it is a valid city, and if is then feel free to add to the txt file! If not, feel free to try again ")
+
+
+rental_url = f"https://www.realtor.ca/on/{rentalCity.replace(' ', '')}/rentals?gad_source=1&gclid=CjwKCAjwk8e1BhALEiwAc8MHiBzxtq0DWgB_kAFSDjUIoX2ahmeN9LhAnZ_9AW9nsadbTZzZk4QBrRoCAE0QAvD_BwE"
+
+print(rental_url)  # test to see link
+
+driver.get(rental_url)
+
+# initializing list for the properties
+properties_list = []
+
 get_scraped_properties()
 print(properties_list)
-
 
 df = pd.DataFrame(properties_list)
 print(df)
@@ -106,6 +110,7 @@ file_name = f"{rentalCity}_rental_properties.xlsx"
 df.to_excel(file_name, index=False)
 print(f"{file_name} has been saved")
 
+statistical_analysis(properties_list)
 
 ''''
 def go_next():
