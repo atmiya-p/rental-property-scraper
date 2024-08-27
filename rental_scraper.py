@@ -1,3 +1,4 @@
+import pandas as pd
 from selenium import webdriver;
 from selenium.webdriver.chrome.service import Service
 from time import sleep;
@@ -95,10 +96,18 @@ def get_scraped_properties():
 
         properties_list.append(property_info)
 
-
+get_scraped_properties()
 print(properties_list)
 
 
+df = pd.DataFrame(properties_list)
+print(df)
+file_name = f"{rentalCity}_rental_properties.xlsx"
+df.to_excel(file_name, index=False)
+print(f"{file_name} has been saved")
+
+
+''''
 def go_next():
     wait = WebDriverWait(driver, 30)
     try:
@@ -119,3 +128,5 @@ while True:
         get_scraped_properties()
     else:
         break
+
+'''
