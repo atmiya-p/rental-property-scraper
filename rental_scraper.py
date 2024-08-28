@@ -1,4 +1,5 @@
 import pandas as pd
+import matplotlib.pyplot as plt
 from selenium import webdriver;
 from selenium.webdriver.chrome.service import Service
 from time import sleep;
@@ -70,9 +71,29 @@ def get_scraped_properties():
         properties_list.append(property_info)
 
 
-def statistical_analysis(properties_dictionary):
-    for properties in properties_dictionary:
-        properties['price'] = int(properties['price'].replace('$', '').replace(',', '').split('/')[0])
+def get_int_price(price):
+    return int(price.replace('$', '').replace(',', '').split('/')[0])
+
+
+def statistical_analysis(dataFrame):
+    dataFrame['price'] = dataFrame['price'].apply(get_int_price)
+
+    # Mean and median calculations
+    meanPrice = dataFrame['price'].mean()
+    print("Mean price: $" + str(meanPrice))
+    medianPrice = dataFrame['price'].median()
+    print("Median price: $" + str(medianPrice))
+
+    standardDeviation = dataFrame['price'].std()
+    print("Standard Deviation: " + str(standardDeviation))
+
+    # Histogram to show the distributional features of the rental prices
+    df['price'].plot(kind="hist", title=f"Distribution of {rentalCity.title()} Rental Prices", edgecolor='black', linewidth=1.0)
+    plt.xlabel("Price ($ CAD)")
+    plt.show()
+
+    # Graph between bedrooms and price relation -- I will choose a scatterplot due to there being 2 quantitative variables
+    dataFrame.plot.scatter(x = "Number of bedrooms", y = "Price ($ CAD)");
 
 
 # Make sure to change path to where the chromedriver is located
@@ -104,13 +125,14 @@ properties_list = []
 get_scraped_properties()
 print(properties_list)
 
+# https://www.w3schools.com/python/pandas/pandas_dataframes.asp
 df = pd.DataFrame(properties_list)
 print(df)
 file_name = f"{rentalCity}_rental_properties.xlsx"
 df.to_excel(file_name, index=False)
 print(f"{file_name} has been saved")
 
-statistical_analysis(properties_list)
+statistical_analysis(df)
 
 ''''
 def go_next():
