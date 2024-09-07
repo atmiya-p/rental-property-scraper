@@ -80,19 +80,19 @@ def statistical_analysis(dataFrame):
 
     # Mean and median calculations
     meanPrice = dataFrame['price'].mean()
-    print("Mean price: $" + str(meanPrice))
+    print("Mean price: $" + str(round(meanPrice, 2)))
     medianPrice = dataFrame['price'].median()
-    print("Median price: $" + str(medianPrice))
+    print("Median price: $" + str(round(medianPrice,2)))
 
     standardDeviation = dataFrame['price'].std()
-    print("Standard Deviation: " + str(standardDeviation))
+    print("Standard Deviation: " + str(round(standardDeviation,2)))
 
     # Histogram to show the distributional features of the rental prices
     df['price'].plot(kind="hist", title=f"Distribution of {rentalCity.title()} Rental Prices", edgecolor='black', linewidth=1.0)
     plt.xlabel("Price ($ CAD)")
     plt.show()
 
-    # Graph between bedrooms and price relation -- I will choose a scatterplot due to there being 2 quantitative variables
+    # Graph between bedrooms and price relation -- scatterplot due to there being 2 quantitative variables (number of bedrooms and the price are both quantitative)
     dataFrame.plot.scatter(x = "Number of bedrooms", y = "Price ($ CAD)");
 
 
@@ -133,6 +133,8 @@ df.to_excel(file_name, index=False)
 print(f"{file_name} has been saved")
 
 statistical_analysis(df)
+
+driver.quit()
 
 ''''
 def go_next():
